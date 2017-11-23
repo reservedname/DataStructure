@@ -1,8 +1,8 @@
 #pragma once
 #include "stdafx.h"
 #define TREE_NUM 10
-#define MAX_VERTEX_NUM 256
-#define MAX_EDGE_NUM 256
+#define MAX_VERTEX_NUM 6
+#define MAX_EDGE_NUM 10
 #define MAXV 256
 using namespace std;
 
@@ -22,10 +22,10 @@ int fix_mfset(MFSet &S, int i)
 	if (i<1 || i>S.n) return -1;
 	int j = 0, k = 0, t = 0;
 	for (j = i; S.nodes[j].parent>0; j = S.nodes[j].parent);
-	for (k = i; k != j; k = t) {
-		t = S.nodes[k].parent;
-		S.nodes[k].parent = j;
-	}
+	//for (k = i; k != j; k = t) {
+	//	t = S.nodes[k].parent;
+	//	S.nodes[k].parent = j;
+	//}
 	return j;
 }
 
@@ -33,14 +33,15 @@ int fix_mfset(MFSet &S, int i)
 int mix_mfset(MFSet &S, int i, int j)
 {
 	if (i<1 || i>S.n || j<1 || j>S.n) return 0;
-	if (S.nodes[i].parent>S.nodes[j].parent) {	//说明j中的元素多(头结点的parent为元素个数的负数)
-		S.nodes[j].parent += S.nodes[i].parent;
-		S.nodes[i].parent = j;
-	}
-	else {
-		S.nodes[i].parent += S.nodes[j].parent;
-		S.nodes[j].parent = i;
-	}
+	//if (S.nodes[i].parent>S.nodes[j].parent) {	//说明j中的元素多(头结点的parent为元素个数的负数)
+	//	S.nodes[j].parent += S.nodes[i].parent;
+	//	S.nodes[i].parent = j;
+	//}
+	//else {
+	//	S.nodes[i].parent += S.nodes[j].parent;
+	//	S.nodes[j].parent = i;
+	//}
+	S.nodes[i].parent = j;
 	return 1;
 }
 
@@ -60,15 +61,17 @@ public:
 };
 EdgeType  *MSTree;
 
-void MiniSpanTree_Kruskal(Graph* G, EdgeType *&MSTree)
+void MiniSpanTree_Kruskal(Graph* G)
 {
+	//EdgeType *&MSTree
 	MFSet S;
+	S.n = 6;
 	int i = 0, k = 0;
 	int v1, v2;
 	for (i = 0; i<G->vexnum; i++) S.nodes[i].parent = -1;	// 初始化，每个点独自成一个子集
-	MSTree = (EdgeType *)malloc((G->vexnum - 1) * sizeof(EdgeType));	// n个点只需要n-1个边连接
+	EdgeType* MSTree = (EdgeType *)malloc((G->vexnum - 1) * sizeof(EdgeType));	// n个点只需要n-1个边连接
 	i = 0; k = 0;
-	while (k < (G->vexnum - 1)) {	// 只需要选择n-1个点即可
+	while (k < (G->vexnum - 1) && (i <G->arcnum)) {	// 只需要选择n-1个点即可
 		v1 = fix_mfset(S, G->edge[i].v1); // 查找顶点所在的连通分量
 		v2 = fix_mfset(S, G->edge[i].v2);
 		if (v1 != v2) { // 两个顶点不在同一连通分量中
