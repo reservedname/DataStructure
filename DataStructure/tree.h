@@ -254,3 +254,11 @@ TreeNode* CompoundExpr(char p, TreeNode* e1, TreeNode* e2) {
 	ans->right = e2;
 	return ans;
 }
+
+void DeleteTree(TreeNode* e) {
+	if (!e) return;
+	DeleteTree(e->left);
+	DeleteTree(e->right);
+	free(e);
+	return;
+}
